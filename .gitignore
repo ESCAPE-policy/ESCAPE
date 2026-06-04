@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Local environments and editor state
+.env
+.venv/
+venv/
+.idea/
+.vscode/
+.DS_Store
+
+# Runtime outputs
+outputs/
+output/
+logs/
+runs/
+videos/
+*.log
+*.tmp
+
+# Local datasets/checkpoints
+data/
+datasets/
+finetune/
+*.ckpt
+*.pt
+*.pth
+
+# Isaac/Omniverse local artifacts
+_isaac_sim*
+_repo/
+_build/
+.lastformat
+*.dmp
+.thumbs/

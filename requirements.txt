@@ -1,0 +1,22 @@
+# ESCAPE runtime dependencies.
+# Install PyTorch, Isaac Sim, and Isaac Lab first as described in README.md.
+h5py
+numpy>=1.24.0
+scipy
+termcolor
+dill
+omegaconf
+hydra-core==1.2.0
+zarr
+trimesh
+geometrout
+urchin
+lxml
+opencv-python
+imageio
+pybullet
+meshcat
+pyribbit
+numba
+pyyaml
+rerun-sdk
