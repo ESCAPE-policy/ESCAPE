@@ -159,9 +159,7 @@ python scripts/motion_planning/ESCAPE_inference.py \
 
 Successful inference example:
 
-<video src="docs/assets/ESCAPE-example.mp4" controls width="100%">
-Your browser does not support the video tag.
-</video>
+![ESCAPE inference demo](docs/assets/ESCAPE-example.gif)
 
 Video: [ESCAPE-example.mp4](docs/assets/ESCAPE-example.mp4)
 
