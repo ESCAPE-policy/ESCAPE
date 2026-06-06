@@ -5,8 +5,9 @@ numpy>=1.24.0
 scipy
 termcolor
 dill
+timm==1.0.21
 omegaconf
-hydra-core==1.2.0
+hydra-core==1.3.2
 zarr
 trimesh
 geometrout

@@ -62,25 +62,85 @@ pip install -r requirements.txt
 python -m pip install -e source/ESCAPE
 ```
 
-If your Isaac Lab install is not on the active Python environment, use the
-Isaac Lab launcher Python instead:
+### 3. Install cuRobo
+
+ESCAPE uses cuRobo for motion planning, so install it in the same
+`env_isaaclab` environment before running inference:
 
 ```bash
-<PATH_TO_ISAACLAB>/isaaclab.sh -p -m pip install -r requirements.txt
-<PATH_TO_ISAACLAB>/isaaclab.sh -p -m pip install -e source/ESCAPE
+conda activate env_isaaclab
+
+# Use CUDA 12.8 with nvcc available. On systems with CUDA installed under
+# /usr/local/cuda-12.8, point build tools there.
+export CUDA_HOME="/usr/local/cuda-12.8"
+export PATH="$CUDA_HOME/bin:$PATH"
+export LD_LIBRARY_PATH="$CUDA_HOME/lib64:$LD_LIBRARY_PATH"
+
+# Confirm that nvcc is visible before installing cuRobo.
+which nvcc
+nvcc --version
+
+# Set this for cuRobo builds. Adjust if your experiment needs a different arch.
+export TORCH_CUDA_ARCH_LIST="8.0+PTX"
+
+python -m pip install -e "git+https://github.com/NVlabs/curobo.git@ebb71702f3f70e767f40fd8e050674af0288abe8#egg=nvidia-curobo" --no-build-isolation
 ```
 
-### 3. Optional: PyTorch3D and Flash Attention
-
-Some checkpoints or downstream experiments may use PyTorch3D or Flash Attention.
-Install them in the same environment if needed:
+If your system does not have CUDA 12.8 with `nvcc`, install CUDA into the conda
+environment and point build tools to that toolkit instead:
 
 ```bash
-# Query GPU compute capability
-python -c "import torch; print(torch.cuda.get_device_capability())"
+conda install -c nvidia cuda-toolkit=12.8 -y
 
-# RTX 4090D uses 8.9. For multiple GPUs, separate values with semicolons.
-export TORCH_CUDA_ARCH_LIST="8.9"
+export CUDA_HOME="$CONDA_PREFIX"
+export PATH="$CUDA_HOME/bin:$PATH"
+export LD_LIBRARY_PATH="$CUDA_HOME/lib:$LD_LIBRARY_PATH"
+```
+
+If `conda install -c nvidia cuda-toolkit=12.8 -y` fails with
+`CondaVerificationError` for `nsight-compute` or a `ClobberError` involving
+CUDA Nsight packages, clear the corrupted conda package cache and retry:
+
+```bash
+# This removes downloaded conda package caches, not installed environments.
+conda clean --packages -y
+conda install -c nvidia cuda-toolkit=12.8 -y
+```
+
+### 4. Install PyTorch3D and Flash Attention
+
+ESCAPE requires PyTorch3D and Flash Attention. Install them in the same
+`env_isaaclab` environment before running inference.
+
+```bash
+# Make sure you are using the ESCAPE / Isaac Lab environment.
+conda activate env_isaaclab
+
+# Query your GPU compute capability.
+python -c "import torch; print(torch.cuda.get_device_capability())"
+```
+
+Example outputs:
+
+```bash
+# RTX 4090D example
+(env_isaaclab) amdin@amdin-Z790-EAGLE-AX:~/ESCAPE_release$ python -c "import torch; print(torch.cuda.get_device_capability())"
+(8, 9)
+
+# RTX 5090 example
+(env_isaaclab) amdin@amdin-Z790-EAGLE-AX:~/ESCAPE_release$ python -c "import torch; print(torch.cuda.get_device_capability())"
+(12, 0)
+```
+
+Set `TORCH_CUDA_ARCH_LIST` from the output above by joining the two numbers with
+a dot. For example, `(8, 9)` becomes `8.9`, and `(12, 0)` becomes `12.0`.
+For multiple GPUs, separate values with semicolons, such as `"8.9;12.0"`.
+
+```bash
+# Choose the value that matches your GPU.
+export TORCH_CUDA_ARCH_LIST="8.9"   # RTX 4090D
+# export TORCH_CUDA_ARCH_LIST="12.0"  # RTX 5090
+
 pip install --no-build-isolation "git+https://github.com/facebookresearch/pytorch3d.git@stable"
 
 # Optional, may take several minutes to compile
@@ -97,9 +157,16 @@ python scripts/motion_planning/ESCAPE_inference.py \
   --scene_name scene_3
 ```
 
+Successful inference example:
+
+<video src="docs/assets/ESCAPE-example.mp4" controls width="100%">
+Your browser does not support the video tag.
+</video>
+
+Video: [ESCAPE-example.mp4](docs/assets/ESCAPE-example.mp4)
+
 Optional arguments:
 
-- `--demo_id 0`
 - `--headless`
 
 Public scenes are `scene_1`, `scene_2`, and `scene_3`. Each scene exposes
