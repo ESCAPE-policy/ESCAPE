@@ -149,11 +149,24 @@ MAX_JOBS=4 python -m pip -v install flash-attn --no-build-isolation
 
 ## Test the Installation
 
+Download the public checkpoint:
+
+- Hugging Face repository: [escape-policy/ESCAPE-checkpoints](https://huggingface.co/escape-policy/ESCAPE-checkpoints)
+- Direct checkpoint file: [ESCAPE.ckpt](https://huggingface.co/escape-policy/ESCAPE-checkpoints/blob/main/ESCAPE.ckpt)
+
+You can also download it from the command line:
+
+```bash
+mkdir -p checkpoints
+wget -O checkpoints/ESCAPE.ckpt \
+  https://huggingface.co/escape-policy/ESCAPE-checkpoints/resolve/main/ESCAPE.ckpt
+```
+
 Run the example inference script with one of the public scenes:
 
 ```bash
 python scripts/motion_planning/ESCAPE_inference.py \
-  --checkpoint_path /path/to/checkpoint.ckpt \
+  --checkpoint_path checkpoints/ESCAPE.ckpt \
   --scene_name scene_3
 ```
 
